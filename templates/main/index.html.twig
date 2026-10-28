@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}I've changed the title{% endblock %}
+
+{% block body %}
+<div>
+    {% if messages|length > 0 %}
+        {% for key, message in messages|slice(0, limit) %}
+            <p>
+                <a href="{{ path('app_show_one', { id: key })}}">
+                    {{ message.message }}
+                </a>
+                {{ include ("main/_message.html.twig", {
+                    message: message
+                }) }}
+            </p>
+        {% endfor %}
+    {% else %}
+            <p>
+                There is no any messages
+            </p>
+    {% endif %}
+</div>
+{% endblock %}
