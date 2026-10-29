@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello MicroPostController!{% endblock %}
+{% block title %}All Posts{% endblock %}
 
 {% block body %}
 <style>
@@ -9,12 +9,16 @@
 </style>
 
 <div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/Users/antonio/symfony-php/symfony-handson/src/Controller/MicroPostController.php</code></li>
-        <li>Your template at <code>/Users/antonio/symfony-php/symfony-handson/templates/micro_post/index.html.twig</code></li>
-    </ul>
+    {% if posts|length > 0 %}
+        {% for post in posts %}
+        <div>
+            <a href="{{ path('app_micro_post_show', { post: post.id }) }}">
+                {{ post.title }}
+            </a>
+        </div>
+        {% endfor %}
+    {% else %}
+        There's nothing here yet!
+    {% endif %}
 </div>
 {% endblock %}
