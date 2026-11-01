@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\MicroPostRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: MicroPostRepository::class)]
 class MicroPost
@@ -14,9 +16,13 @@ class MicroPost
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[NotBlank()]
+    #[Length(min: 5, max: 255, minMessage: 'Title is too short, 5 characters is the minimum.')]
     private ?string $title = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[NotBlank()]
+    #[Length(min: 5, max: 255)]
     private ?string $text = null;
 
     #[ORM\Column(nullable: true)]
