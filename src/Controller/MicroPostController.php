@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\MicroPost;
 use App\Form\MicroPostType;
 use App\Entity\Comment;
+use App\Form\CommentType;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -133,6 +134,42 @@ final class MicroPostController extends AbstractController
 
         return $this->render('micro_post/edit.html.twig', [
             'form' => $form
+        ]);
+    }
+
+    #[Route('/micro/post/{id}/comment', name: 'app_micro_post_comment', priority: 2)]
+    public function comment(Request $request, EntityManagerInterface $entity, int $id): Response
+    {
+        $microPost = $entity->getRepository(MicroPost::class)->find($id);
+        if(!$microPost) {
+            throw $this->createNotFoundException(
+                'No post found for id ' . $id
+            );
+        }
+
+        $form = $this->createForm(CommentType::class, new Comment());
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $comment = $form->getData();
+            $comment->setPost($microPost);
+            // $comment->setCreated(new DateTime());
+            $entity->persist($comment);
+            $entity->flush();
+
+            $this->addFlash(
+                'success',
+                "Your comment has been created"
+            );
+
+            return $this->redirectToRoute('app_micro_post_show', [
+                 'post' => $microPost->getId()
+            ]);
+        }
+
+        return $this->render('micro_post/comment.html.twig', [
+            'form' => $form,
+            'post' => $microPost
         ]);
     }
 }
