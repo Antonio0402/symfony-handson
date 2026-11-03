@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\MicroPost;
 use App\Form\MicroPostType;
+use App\Entity\Comment;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,14 +24,33 @@ final class MicroPostController extends AbstractController
         // $microPost->setTitle('This is a title from Controller');
         // $microPost->setText('Hello from Controller');
         // $microPost->setCreated(new DateTime());
+        
+        // $microPost = $em->getRepository(MicroPost::class)->find(1);
+
+        //  if (!$microPost) {
+        //     throw $this->createNotFoundException(
+        //         'No post found for id 1'
+        //     );
+        // }
+
+        // $comment = $microPost->getComments()[0];
+
+        // $microPost->removeComment($comment);
+        // $em->persist($microPost);
+        // $em->flush();
+
+
+        // $comment = new Comment();
+        // $comment->setText('The comment from Controller');
+        // $comment->setPost($microPost);
+        // $microPost->addComment($comment);
 
         // tell Doctrine you want to (eventually) save the MicroPost (no queries yet)
-        // $em->persist($microPost);
+        // $em->persist($comment);
 
         // actually executes the queries (i.e. the INSERT query)
         // $em->flush();
 
-        // $microPost = $posts->find(7);
 
         // Delete existing
         // if ($microPost = $posts->find(7)) {
