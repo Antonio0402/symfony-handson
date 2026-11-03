@@ -17,6 +17,9 @@ class UserProfile
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $name = null;
 
+    #[ORM\Column(length: 1024, nullable: true)]
+    private ?string $bio = null;
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $websiteUrl = null;
 
@@ -49,6 +52,18 @@ class UserProfile
     public function setName(?string $name): static
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getBio(): ?string
+    {
+        return $this->bio;
+    }
+
+    public function setBio(?string $bio): static
+    {
+        $this->bio = $bio;
 
         return $this;
     }
