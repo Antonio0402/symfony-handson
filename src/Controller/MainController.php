@@ -15,7 +15,7 @@ class MainController extends AbstractController
         ['message' => 'Bye!', 'created' => '2021/05/12']
     ];
 
-    #[Route('/{limit?3}', name: 'app_index', requirements: ['page' => Requirement::DIGITS])]
+    #[Route('/{limit?3}', name: 'app_index', requirements: ['limit' => Requirement::DIGITS])]
     public function index(int $limit): Response
     {
         // return new Response(

@@ -15,6 +15,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class MicroPostController extends AbstractController
 {
@@ -69,6 +70,7 @@ final class MicroPostController extends AbstractController
     }
 
     #[Route('/micro/post/{post}', name: 'app_micro_post_show')]
+    #[IsGranted(MicroPost::VIEW, 'post')]
     public function showOne(MicroPost $post): Response
     {
         // dd($post);
@@ -78,6 +80,7 @@ final class MicroPostController extends AbstractController
         ]);
     }
     #[Route('/micro/post/add', name: 'app_micro_post_add', priority: 2)]
+    #[IsGranted('ROLE_WRITER')]
     public function add(Request $request, EntityManagerInterface $entity): Response
     {
         // $microPost = new MicroPost();
@@ -87,12 +90,18 @@ final class MicroPostController extends AbstractController
         //     ->add('created', DateType::class)
         // ->add('save', SubmitType::class, ['label' => 'Create Post'])
         //     ->getForm();
+
+        // $this->denyAccessUnlessGranted(
+            // 'IS_AUTHENTICATED_FULLY'
+            // 'PUBLIC_ACCESS'
+        // );
         $form = $this->createForm(MicroPostType::class, new MicroPost());
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $newPost = $form->getData();
             // $newPost->setCreated(new DateTime());
+            $newPost->setAuthor($this->getUser());
             $entity->persist($newPost);
             $entity->flush();
 
@@ -109,6 +118,7 @@ final class MicroPostController extends AbstractController
         ]);
     }
     #[Route('/micro/post/{post}/edit', name: 'app_micro_post_edit', priority: 2)]
+    #[IsGranted(MicroPost::EDIT, 'post')]
     public function edit(MicroPost $post, Request $request, EntityManagerInterface $entity): Response
     {
         // $form = $this->createFormBuilder($post)
@@ -139,6 +149,7 @@ final class MicroPostController extends AbstractController
     }
 
     #[Route('/micro/post/{id}/comment', name: 'app_micro_post_comment', priority: 2)]
+    #[IsGranted('ROLE_COMMENTER')]
     public function comment(Request $request, EntityManagerInterface $entity, int $id): Response
     {
         $microPost = $entity->getRepository(MicroPost::class)->find($id);
@@ -155,6 +166,7 @@ final class MicroPostController extends AbstractController
             $comment = $form->getData();
             $comment->setPost($microPost);
             // $comment->setCreated(new DateTime());
+            $comment->setAuthor($this->getUser());
             $entity->persist($comment);
             $entity->flush();
 

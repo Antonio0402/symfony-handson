@@ -29,25 +29,37 @@ class AppFixtures extends Fixture
         );
 
         
+        $user2 = new User();
+        $user2->setEmail('antonio@test');
+        $user2->setPassword(
+            $this->userPasswordHasher->hashPassword(
+                $user2,
+                'password'
+            )
+        );
+        
         $manager->persist($user1);
-
+        $manager->persist($user2);
 
         $microPost1 = new MicroPost();
         $microPost1->setTitle('Welcome to America');
         $microPost1->setText('This is America');
         $microPost1->setCreated(new DateTime());
+        $microPost1->setAuthor($user1);
         $manager->persist($microPost1);
 
         $microPost2 = new MicroPost();
         $microPost2->setTitle('Welcome to Poland');
         $microPost2->setText('This is Poland');
         $microPost2->setCreated(new DateTime());
+        $microPost2->setAuthor($user2);
         $manager->persist($microPost2);
 
         $microPost3 = new MicroPost();
         $microPost3->setTitle('Welcome to Japan');
         $microPost3->setText('This is Japan');
         $microPost3->setCreated(new DateTime());
+        $microPost3->setAuthor($user2);
         $manager->persist($microPost3);
 
         $manager->flush();
