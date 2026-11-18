@@ -41,14 +41,17 @@
                         <div>
                             <a href="{{ path('app_micro_post_add') }}">Create a post</a>
                         </div>
-                        <div>
+                        <div class="ml-2">
+                            <a href="{{ path('app_setting_profile') }}">Profile Settings</a>
+                        </div>
+                        <div class="ml-2">
                             <a href="{{ path('app_logout') }}">Logout</a>
                         </div>
                     {% else %}
                         <div>
                             <a href="{{ path('app_login') }}">Login</a>
                         </div>
-                        <div>
+                        <div class="ml-2">
                             <a href="{{ path('app_register') }}">Register</a>
                         </div>
                     {% endif %}
