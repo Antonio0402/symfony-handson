@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Top Liked{% endblock %}
+
+{% block bread %}
+    → Top Liked
+{% endblock %}
+{% block body %}
+    {% include "micro_post/_post_tabs.html.twig" %}
+    {% include "micro_post/_post_list.html.twig" %}
+{% endblock %}

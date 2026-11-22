@@ -2,19 +2,20 @@
 
 namespace App\Controller;
 
-use App\Entity\MicroPost;
-use App\Form\MicroPostType;
 use App\Entity\Comment;
+use App\Entity\MicroPost;
+use App\Entity\User;
 use App\Form\CommentType;
+use App\Form\MicroPostType;
 use DateTime;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class MicroPostController extends AbstractController
@@ -66,6 +67,31 @@ final class MicroPostController extends AbstractController
 
         return $this->render('micro_post/index.html.twig', [
             'posts' => $posts->findAllWithComments(),
+        ]);
+    }
+
+    #[Route('/micro/post/top-liked', name: 'app_micro_post_topliked')]
+    public function topLiked(EntityManagerInterface $em): Response
+    {
+        
+        $posts = $em->getRepository(MicroPost::class);
+        return $this->render('micro_post/top_liked.html.twig', [
+            'posts' => $posts->findAllWithMinLikes(2)
+        ]);
+    }
+
+    #[Route('/micro/post/follows', name: 'app_micro_post_follows')]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    public function follows(EntityManagerInterface $em): Response
+    {
+        
+        $posts = $em->getRepository(MicroPost::class);
+        /**
+         * @var User $currentUser
+         */
+        $currentUser = $this->getUser();
+        return $this->render('micro_post/follows.html.twig', [
+            'posts' => $posts->findAllByAuthor($currentUser->getFollows())
         ]);
     }
 

@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\MicroPost;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -16,6 +17,32 @@ class MicroPostRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, MicroPost::class);
+    }
+
+    public function findAllWithMinLikes(int $minLikes): array
+    {
+        $idList = $this->createQueryBuilder('p')
+            ->select('p.id')
+            ->leftJoin('p.likedBy', 'l')
+            ->groupBy('p.id')
+            ->having('COUNT(l) >= :minLikes')
+            ->setParameter('minLikes', $minLikes)
+            ->getQuery()
+            ->getSingleColumnResult();
+
+        if ($idList === []) {
+            return [];
+        }
+
+        return $this->findAllQuery(
+            withLikes: true,
+            withComments: true,
+            withAuthors: true,
+            withProfiles: true
+        )->where('p.id IN (:idList)')
+        ->setParameter('idList', $idList)
+        ->getQuery()
+        ->getResult();
     }
 
     public function findAllWithComments(): array {
@@ -32,19 +59,17 @@ class MicroPostRepository extends ServiceEntityRepository
         )->getQuery()->getResult();
     }
 
-    public function findAllByAuthor(User | int $author): array
+    public function findAllByAuthor(Collection|array $author): array
     {
         return $this->findAllQuery(
             withComments: true,
             withLikes: true,
             withAuthors: true,
             withProfiles: true
-        )->where('p.author = :author')
+        )->where('p.author IN (:author)')
         ->setParameter(
             'author',
-            $author instanceof User
-            ? $author->getId()
-            : $author
+            $author
         )->getQuery()->getResult();
     }
 
