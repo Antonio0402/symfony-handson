@@ -32,7 +32,12 @@ final class MicroPostVoter extends Voter
      * @param Vote|null $vote
      * @return boolean
      */
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
+    protected function voteOnAttribute(
+        string $attribute, 
+        mixed $subject, 
+        TokenInterface $token, 
+        ?Vote $vote = null
+    ): bool
     {   
         /**
          * @var User $user
@@ -58,7 +63,13 @@ final class MicroPostVoter extends Voter
                     || $this->security->isGranted('ROLE_EDITOR')
                 );
             case MicroPost::VIEW:
-                return false;
+                if(!$subject->isExtraPrivacy()) {
+                    return true;
+                }
+                return $isAuth && 
+                ( $subject->getAuthor()->getId() == $user->getId() || 
+                    $subject->getAuthor()->getFollows()->contains($user)
+                );
         }
 
         return false;

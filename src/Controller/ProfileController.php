@@ -17,7 +17,7 @@ final class ProfileController extends AbstractController
         $posts = $entityManager->getRepository(MicroPost::class);
         return $this->render('profile/show.html.twig', [
             'user' => $user,
-            'post' => $posts->findAllByAuthor($user)
+            'post' => $posts->findAllByAuthor($user->getFollows())
         ]);
     }
     #[Route('/profile/{id}/follows', name: 'app_profile_follows')]

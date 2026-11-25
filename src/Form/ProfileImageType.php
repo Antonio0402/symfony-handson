@@ -21,7 +21,7 @@ class ProfileImageType extends AbstractType
                 // in the associated entity, so you can use the PHP constraint classes
                 'constraints' => [
                     new Assert\File(
-                        maxSize: '1024K',
+                        maxSize: '2048K',
                         mimeTypes: [
                             'image/jpeg',
                             'image/png'
